@@ -78,6 +78,7 @@ llvm_browser_targets = [
     'LLVMAsmPrinter',
     'LLVMBinaryFormat',
     'LLVMBitReader',
+    'LLVMBitstreamReader',
     'LLVMBitWriter',
     'LLVMCodeGen',
     'LLVMCore',

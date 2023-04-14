@@ -77,7 +77,7 @@ print_usage() {
 
 components="\
     analysis asmparser asmprinter \
-    binaryformat bitreader bitwriter \
+    binaryformat bitreader bitstreamreader bitwriter \
     codegen core coroutines coverage \
     debuginfocodeview globalisel \
     instcombine instrumentation ipo irreader \
@@ -96,6 +96,7 @@ libs[asmparser]='LLVMAsmParser'
 libs[asmprinter]='LLVMAsmPrinter'
 libs[binaryformat]='LLVMBinaryFormat'
 libs[bitreader]='LLVMBitReader'
+libs[bitstreamreader]='LLVMBitstreamReader'
 libs[bitwriter]='LLVMBitWriter'
 libs[codegen]='LLVMCodeGen'
 libs[core]='LLVMCore'
