@@ -9,7 +9,7 @@ pipeline {
         }
         stage("Building") {
             steps {
-                sh 'ruby ./build.rb --pack'
+                sh 'source /etc/profile.d/emscripten.sh && ruby ./build.rb --pack'
                 archiveArtifacts artifacts: 'browser-llvm-*.tar.xz', followSymlinks: false
             }
         }
