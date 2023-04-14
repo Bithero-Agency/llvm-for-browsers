@@ -1,4 +1,4 @@
-pipelines {
+pipeline {
     agent { label 'arch' }
     stages {
         stage("Prepare system") {
