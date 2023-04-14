@@ -85,6 +85,7 @@ components="\
     mmc mmcdisassembler mmcparser \
     objcarcopts object option \
     passes profiledata \
+    remarks \
     scalaropts selectiondag support \
     target transformutils \
     vectorize \
@@ -118,6 +119,7 @@ libs[object]='LLVMObject'
 libs[option]='LLVMOption'
 libs[passes]='LLVMPasses'
 libs[profiledata]='LLVMProfileData'
+libs[remarks]='LLVMRemarks'
 libs[scalaropts]='LLVMScalarOpts'
 libs[selectiondag]='LLVMSelectionDAG'
 libs[support]='LLVMSupport'
