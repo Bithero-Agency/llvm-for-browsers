@@ -149,7 +149,23 @@ if $options[:package] then
     end
 
     FileUtils.mkdir_p(File.join(package_dir, "lib"))
-    FileUtils.cp_r(File.join(llvm_browser_builddir, "include"), "#{package_dir}/", :verbose => true)
+
+    # copy builded headers
+    for f in Dir.glob(File.join(llvm_browser_builddir, "include", "**/*.{h,td,inc,def}"))
+        next if (f.include?("CMakeFiles"))
+        dir = File.dirname(f).gsub( llvm_browser_builddir, package_dir )
+        FileUtils.mkdir_p(dir)
+        FileUtils.cp(f, "#{dir}/", :verbose => true)
+    end
+
+    # copy "normal" headers
+    for f in Dir.glob(File.join($src_dir, "include", "**/*.{h,td,inc,def}"))
+        next if (f.include?("CMakeFiles"))
+        dir = File.dirname(f).gsub( $src_dir, package_dir )
+        FileUtils.mkdir_p(dir)
+        FileUtils.cp(f, "#{dir}/", :verbose => true)
+    end
+
     for f in Dir.glob(File.join(llvm_browser_builddir, "lib", "*.a"))
         FileUtils.cp(f, "#{package_dir}/lib/", :verbose => true)
     end
