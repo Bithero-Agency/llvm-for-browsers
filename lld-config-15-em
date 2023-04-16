@@ -1,0 +1,158 @@
+#!bash
+# llvm-config like script for lld
+
+# src: https://stackoverflow.com/questions/29832037/how-to-get-script-directory-in-posix-sh/29835459#29835459
+rreadlink() ( # Execute the function in a *subshell* to localize variables and the effect of `cd`.
+
+  target=$1 fname= targetDir= CDPATH=
+
+  # Try to make the execution environment as predictable as possible:
+  # All commands below are invoked via `command`, so we must make sure that `command`
+  # itself is not redefined as an alias or shell function.
+  # (Note that command is too inconsistent across shells, so we don't use it.)
+  # `command` is a *builtin* in bash, dash, ksh, zsh, and some platforms do not even have
+  # an external utility version of it (e.g, Ubuntu).
+  # `command` bypasses aliases and shell functions and also finds builtins 
+  # in bash, dash, and ksh. In zsh, option POSIX_BUILTINS must be turned on for that
+  # to happen.
+  { \unalias command; \unset -f command; } >/dev/null 2>&1
+  [ -n "$ZSH_VERSION" ] && options[POSIX_BUILTINS]=on # make zsh find *builtins* with `command` too.
+
+  while :; do # Resolve potential symlinks until the ultimate target is found.
+      [ -L "$target" ] || [ -e "$target" ] || { command printf '%s\n' "ERROR: '$target' does not exist." >&2; return 1; }
+      command cd "$(command dirname -- "$target")" # Change to target dir; necessary for correct resolution of target path.
+      fname=$(command basename -- "$target") # Extract filename.
+      [ "$fname" = '/' ] && fname='' # !! curiously, `basename /` returns '/'
+      if [ -L "$fname" ]; then
+        # Extract [next] target path, which may be defined
+        # *relative* to the symlink's own directory.
+        # Note: We parse `ls -l` output to find the symlink target
+        #       which is the only POSIX-compliant, albeit somewhat fragile, way.
+        target=$(command ls -l "$fname")
+        target=${target#* -> }
+        continue # Resolve [next] symlink target.
+      fi
+      break # Ultimate target reached.
+  done
+  targetDir=$(command pwd -P) # Get canonical dir. path
+  # Output the ultimate target's canonical path.
+  # Note that we manually resolve paths ending in /. and /.. to make sure we have a normalized path.
+  if [ "$fname" = '.' ]; then
+    command printf '%s\n' "${targetDir%/}"
+  elif  [ "$fname" = '..' ]; then
+    # Caveat: something like /var/.. will resolve to /private (assuming /var@ -> /private/var), i.e. the '..' is applied
+    # AFTER canonicalization.
+    command printf '%s\n' "$(command dirname -- "${targetDir}")"
+  else
+    command printf '%s\n' "${targetDir%/}/$fname"
+  fi
+)
+DIR=$(dirname -- "$(rreadlink "$0")")
+if [[ "$(basename "$DIR")" = "bin" ]]; then
+    DIR=$(dirname -- "$DIR")
+fi
+
+print_usage() {
+    echo "usage: lld-config-15-em <OPTION>... [<COMPONENT>...]"
+    echo ""
+    echo "Script to integrate lld-for-browsers into exisiting projects"
+    echo ""
+    echo "Options:"
+    echo "  --cflags          C compiler flags for files that include LLD headers."
+    echo "  --components      C compiler flags for files that include LLD headers."
+    echo "  --cppflags        C preprocessor flags for files that include LLD headers."
+    echo "  --cxxflags        C++ compiler flags for files that include LLD headers."
+    echo "  --help            Print a summary of lld-config arguments."
+    echo "  --includedir      Directory containing LLD headers."
+    echo "  --ldflags         Print Linker flags."
+    echo "  --libdir          Directory containing LLD libraries."
+    echo "  --libs            Libraries needed to link against LLD components."
+    echo "  --prefix          Print the installation prefix."
+    echo "  --version         Print LLD version."
+}
+
+components="coff common elf macho mingw wasm"
+declare -A libs
+libs[coff]='lldCOFF'
+libs[common]='lldCommon'
+libs[elf]='lldELF'
+libs[macho]='lldMachO'
+libs[mingw]='lldMinGW'
+libs[wasm]='lldWasm'
+
+cppflags=""
+print_libs=false
+
+POS_ARGS=()
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --cflags)
+            echo "-I$DIR/include $cppflags"
+            shift
+            ;;
+        --components)
+            echo "$components"
+            shift
+            ;;
+        --cppflags)
+            echo "-I$DIR/include $cppflags"
+            shift
+            ;;
+        --cxxflags)
+            echo "-I$DIR/include $cppflags"
+            shift
+            ;;
+        --help)
+            print_usage
+            exit 0
+            ;;
+        --includedir)
+            echo "$DIR/include"
+            shift
+            ;;
+        --ldflags)
+            echo "-L$DIR/lib"
+            shift
+            ;;
+        --libdir)
+            echo "$DIR/lib"
+            shift
+            ;;
+        --libs)
+            print_libs=true
+            shift
+            ;;
+        --prefix)
+            echo "$DIR"
+            exit 0
+            ;;
+        --version)
+            echo "15.0.7"
+            exit 0
+            ;;
+        --*)
+            echo "Error: unknown option $1"
+            exit 1
+            ;;
+        *)
+            POS_ARGS+=("$1")
+            shift
+            ;;
+    esac
+done
+
+if $print_libs; then
+    if [[ " ${POS_ARGS[*]} " =~ " all " ]]; then
+        str=""
+        for comp in $components; do
+            str="$str -l${libs["$comp"]}"
+        done
+        echo "$str"
+    else
+        str=""
+        for comp in $POS_ARGS; do
+            str="$str -l${libs["$comp"]}"
+        done
+        echo "$str"
+    fi
+fi

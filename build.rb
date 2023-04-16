@@ -224,5 +224,7 @@ if $options[:package] then
 
     package_dir = "browser-lld-#{$llvm_version}"
     package(package_dir, lld_browser_builddir, $lld_dir)
+    FileUtils.mkdir_p(File.join(package_dir, "bin"))
+    FileUtils.cp("./lld-config-15-em", "#{package_dir}/bin/", :verbose => true)
     system("tar -cvf browser-lld-#{$llvm_version}.tar.xz #{package_dir}")
 end
