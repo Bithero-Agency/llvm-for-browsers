@@ -4,3 +4,4 @@ lld-*.src*
 cmake-*.src*
 cmake
 browser-llvm-*
+browser-lld-*

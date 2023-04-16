@@ -187,9 +187,7 @@ if $options[:build_lld] then
     end
 end
 
-if $options[:package] then
-    package_dir = "browser-llvm-#{$llvm_version}"
-
+def package(package_dir, builddir, src_dir)
     if Dir.exists?(package_dir) then
         FileUtils.rm_rf(package_dir)
     end
@@ -197,27 +195,34 @@ if $options[:package] then
     FileUtils.mkdir_p(File.join(package_dir, "lib"))
 
     # copy builded headers
-    for f in Dir.glob(File.join(llvm_browser_builddir, "include", "**/*.{h,td,inc,def}"))
+    for f in Dir.glob(File.join(builddir, "include", "**/*.{h,td,inc,def}"))
         next if (f.include?("CMakeFiles"))
-        dir = File.dirname(f).gsub( llvm_browser_builddir, package_dir )
+        dir = File.dirname(f).gsub( builddir, package_dir )
         FileUtils.mkdir_p(dir)
         FileUtils.cp(f, "#{dir}/", :verbose => true)
     end
 
     # copy "normal" headers
-    for f in Dir.glob(File.join($src_dir, "include", "**/*.{h,td,inc,def}"))
+    for f in Dir.glob(File.join(src_dir, "include", "**/*.{h,td,inc,def}"))
         next if (f.include?("CMakeFiles"))
-        dir = File.dirname(f).gsub( $src_dir, package_dir )
+        dir = File.dirname(f).gsub( src_dir, package_dir )
         FileUtils.mkdir_p(dir)
         FileUtils.cp(f, "#{dir}/", :verbose => true)
     end
 
-    for f in Dir.glob(File.join(llvm_browser_builddir, "lib", "*.a"))
+    for f in Dir.glob(File.join(builddir, "lib", "*.a"))
         FileUtils.cp(f, "#{package_dir}/lib/", :verbose => true)
     end
+end
 
+if $options[:package] then
+    package_dir = "browser-llvm-#{$llvm_version}"
+    package(package_dir, llvm_browser_builddir, $src_dir)
     FileUtils.mkdir_p(File.join(package_dir, "bin"))
     FileUtils.cp("./llvm-config-15-em", "#{package_dir}/bin/", :verbose => true)
-
     system("tar -cvf browser-llvm-#{$llvm_version}.tar.xz #{package_dir}")
+
+    package_dir = "browser-lld-#{$llvm_version}"
+    package(package_dir, lld_browser_builddir, $lld_dir)
+    system("tar -cvf browser-lld-#{$llvm_version}.tar.xz #{package_dir}")
 end
