@@ -125,6 +125,7 @@ llvm_browser_targets = [
     'LLVMWebAssemblyCodeGen',
     'LLVMWebAssemblyDesc',
     'LLVMWebAssemblyInfo',
+    'LLVMWebAssemblyUtils',
 ]
 
 cmake_args = [

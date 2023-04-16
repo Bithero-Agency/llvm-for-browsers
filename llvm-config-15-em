@@ -89,7 +89,7 @@ components="\
     scalaropts selectiondag support \
     target transformutils \
     vectorize \
-    webassemblyasmparser webassemblycodegen webassemblydesc webassemblyinfo \
+    webassemblyasmparser webassemblycodegen webassemblydesc webassemblyinfo webassemblyutils \
 "
 declare -A libs
 libs[analysis]='LLVMAnalysis'
@@ -130,6 +130,7 @@ libs[webassemblyasmparser]='LLVMWebAssemblyAsmParser'
 libs[webassemblycodegen]='LLVMWebAssemblyCodeGen'
 libs[webassemblydesc]='LLVMWebAssemblyDesc'
 libs[webassemblyinfo]='LLVMWebAssemblyInfo'
+libs[webassemblyutils]='LLVMWebAssemblyUtils'
 
 cppflags="-D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS"
 print_libs=false
