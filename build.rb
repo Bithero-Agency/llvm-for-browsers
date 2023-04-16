@@ -87,6 +87,7 @@ puts ">>>> building llvm for the browser"
 llvm_browser_builddir = File.absolute_path('./build/llvm-browser-Release')
 llvm_browser_installdir = File.absolute_path('./install/llvm-browser-Release')
 llvm_browser_targets = [
+    'LLVMAggressiveInstCombine',
     'LLVMAnalysis',
     'LLVMAsmParser',
     'LLVMAsmPrinter',
@@ -99,6 +100,9 @@ llvm_browser_targets = [
     'LLVMCoroutines',
     'LLVMCoverage',
     'LLVMDebugInfoCodeView',
+    'LLVMDebugInfoDWARF',
+    'LLVMDemangle',
+    'LLVMFrontendOpenMP',
     'LLVMGlobalISel',
     'LLVMInstCombine',
     'LLVMInstrumentation',
@@ -109,6 +113,7 @@ llvm_browser_targets = [
     'LLVMMC',
     'LLVMMCDisassembler',
     'LLVMMCParser',
+    'LLVMMIRParser',
     'LLVMObjCARCOpts',
     'LLVMObject',
     'LLVMOption',

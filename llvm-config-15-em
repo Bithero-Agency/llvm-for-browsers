@@ -76,13 +76,15 @@ print_usage() {
 }
 
 components="\
-    analysis asmparser asmprinter \
+    aggressiveinstcombine analysis asmparser asmprinter \
     binaryformat bitreader bitstreamreader bitwriter \
     codegen core coroutines coverage \
-    debuginfocodeview globalisel \
+    debuginfocodeview debuginfodwarf demangle \
+    frontendopenmp \
+    globalisel \
     instcombine instrumentation ipo irreader \
     linker lto \
-    mmc mmcdisassembler mmcparser \
+    mmc mmcdisassembler mmcparser mirparser \
     objcarcopts object option \
     passes profiledata \
     remarks \
@@ -92,6 +94,7 @@ components="\
     webassemblyasmparser webassemblycodegen webassemblydesc webassemblyinfo webassemblyutils \
 "
 declare -A libs
+libs[aggressiveinstcombine]='LLVMAggressiveInstCombine'
 libs[analysis]='LLVMAnalysis'
 libs[asmparser]='LLVMAsmParser'
 libs[asmprinter]='LLVMAsmPrinter'
@@ -104,6 +107,9 @@ libs[core]='LLVMCore'
 libs[coroutines]='LLVMCoroutines'
 libs[coverage]='LLVMCoverage'
 libs[debuginfocodeview]='LLVMDebugInfoCodeView'
+libs[debuginfodwarf]='LLVMDebugInfoDWARF'
+libs[demangle]='LLVMDemangle'
+libs[frontendopenmp]='LLVMFrontendOpenMP'
 libs[globalisel]='LLVMGlobalISel'
 libs[instcombine]='LLVMInstCombine'
 libs[instrumentation]='LLVMInstrumentation'
@@ -114,6 +120,7 @@ libs[lto]='LLVMLTO'
 libs[mmc]='LLVMMC'
 libs[mmcdisassembler]='LLVMMCDisassembler'
 libs[mmcparser]='LLVMMCParser'
+libs[mirparser]='LLVMMIRParser'
 libs[objcarcopts]='LLVMObjCARCOpts'
 libs[object]='LLVMObject'
 libs[option]='LLVMOption'
