@@ -7,11 +7,13 @@ require "optparse"
 
 $llvm_version = "15.0.7"
 $src_dir = File.absolute_path("llvm-#{$llvm_version}.src")
+$lld_dir = File.absolute_path("lld-#{$llvm_version}.src")
 $cmake_dir = File.absolute_path("cmake")
 $ninja_jobs = ENV['NINJA_JOBS'] || (Etc.nprocessors / 2)
 
 $options = {
     :build_browser => true,
+    :build_lld => true,
     :package => false,
 }
 OptionParser.new do |opts|
@@ -19,6 +21,9 @@ OptionParser.new do |opts|
 
     opts.on("--skip-browser", "Skips building of llvm via emscripten") do
         $options[:build_browser] = false
+    end
+    opts.on("--skip-lld", "Skips building of lld via emscripten") do
+        $options[:build_lld] = false
     end
     opts.on("--package", "Build a package") do
         $options[:package] = true
@@ -52,6 +57,15 @@ unless Dir.exists?($src_dir) then
     system("tar -xvf ./llvm-#{$llvm_version}.src.tar.xz -C .")
 else
     puts ">>>> re-using existing llvm #{$llvm_version}"
+end
+
+unless Dir.exists?($lld_dir) then
+    puts ">>>> downloading lld #{$llvm_version}"
+    download("https://github.com/llvm/llvm-project/releases/download/llvmorg-#{$llvm_version}/lld-#{$llvm_version}.src.tar.xz")
+    puts ">>>> extracting lld #{$llvm_version}"
+    system("tar -xvf ./lld-#{$llvm_version}.src.tar.xz -C .")
+else
+    puts ">>>> re-using existing lld #{$llvm_version}"
 end
 
 unless Dir.exists?($cmake_dir) then
@@ -140,6 +154,36 @@ if $options[:build_browser] then
         run("emcmake cmake #{cmake_args.join(' ')} #{$src_dir}")
 
         run("ninja -j#{$ninja_jobs} #{llvm_browser_targets.join(' ')}")
+    end
+end
+
+# building lld for the browser
+puts ">>>> building lld for the browser"
+
+lld_browser_builddir = File.absolute_path('./build/lld-browser-Release')
+lld_browser_installdir = File.absolute_path('./install/lld-browser-Release')
+lld_browser_targets = [
+    'lldCOFF',
+    'lldCommon',
+    'lldELF',
+    'lldMachO',
+    'lldMinGW',
+    'lldWasm',
+]
+lld_cmake_args = [
+    '-G "Ninja"',
+    '-DCMAKE_BUILD_TYPE=Release',
+    '-DLLVM_INCLUDE_TESTS=OFF',
+    '-DLLD_BUILD_TOOLS=OFF',
+    "-DLLVM_DIR=#{llvm_browser_builddir}/lib/cmake/llvm",
+    "-DLLVM_TABLEGEN_EXE=/usr/bin/llvm-tblgen",
+]
+
+if $options[:build_lld] then
+    FileUtils.mkdir_p(lld_browser_builddir)
+    Dir.chdir(lld_browser_builddir) do
+        run("emcmake cmake #{lld_cmake_args.join(' ')} #{$lld_dir}")
+        run("ninja -j#{$ninja_jobs} #{lld_browser_targets.join(' ')}")
     end
 end
 

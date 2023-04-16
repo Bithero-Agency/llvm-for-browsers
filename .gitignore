@@ -1,5 +1,6 @@
 build
 llvm-*.src*
+lld-*.src*
 cmake-*.src*
 cmake
 browser-llvm-*
