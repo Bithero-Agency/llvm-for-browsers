@@ -150,7 +150,7 @@ if $print_libs; then
         echo "$str"
     else
         str=""
-        for comp in $POS_ARGS; do
+        for comp in "${POS_ARGS[@]}"; do
             str="$str -l${libs["$comp"]}"
         done
         echo "$str"
