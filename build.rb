@@ -38,7 +38,7 @@ end
 def patch(file)
     Dir.chdir($src_dir) do
         puts ">>>> applying #{file}"
-        system("patch -N -i ../#{file}")
+        system("patch -N -p0 -i ../#{file}")
     end
 end
 
