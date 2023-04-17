@@ -80,6 +80,7 @@ end
 
 # patch llvm
 patch("llvm-disable-default-includes.patch")
+patch("llvm-add-wait4.patch")
 
 # building llvm for the browser
 puts ">>>> building llvm for the browser"

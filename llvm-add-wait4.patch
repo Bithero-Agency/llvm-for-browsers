@@ -1,0 +1,17 @@
+--- lib/Support/Unix/Program.inc.orig	2023-04-17 03:57:47.212664412 +0200
++++ lib/Support/Unix/Program.inc	2023-04-17 04:33:45.989959783 +0200
+@@ -337,7 +337,14 @@
+ namespace sys {
+ 
+ #ifndef _AIX
++#ifdef EMSCRIPTEN
++pid_t wait4(pid_t pid, int* status, int options, struct rusage *usage) {
++  errno=ENOSYS;
++  return -1;
++}
++#else
+ using ::wait4;
++#endif
+ #else
+ static pid_t (wait4)(pid_t pid, int *status, int options, struct rusage *usage);
+ #endif
