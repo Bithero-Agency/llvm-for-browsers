@@ -84,7 +84,7 @@ components="\
     globalisel \
     instcombine instrumentation ipo irreader \
     linker lto \
-    mmc mmcdisassembler mmcparser mirparser \
+    mc mcdisassembler mcparser mirparser \
     objcarcopts object option \
     passes profiledata \
     remarks \
@@ -117,9 +117,9 @@ libs[ipo]='LLVMipo'
 libs[irreader]='LLVMIRReader'
 libs[linker]='LLVMLinker'
 libs[lto]='LLVMLTO'
-libs[mmc]='LLVMMC'
-libs[mmcdisassembler]='LLVMMCDisassembler'
-libs[mmcparser]='LLVMMCParser'
+libs[mc]='LLVMMC'
+libs[mcdisassembler]='LLVMMCDisassembler'
+libs[mcparser]='LLVMMCParser'
 libs[mirparser]='LLVMMIRParser'
 libs[objcarcopts]='LLVMObjCARCOpts'
 libs[object]='LLVMObject'
