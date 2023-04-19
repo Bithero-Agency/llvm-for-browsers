@@ -125,6 +125,7 @@ llvm_browser_targets = [
     'LLVMSelectionDAG',
     'LLVMSupport',
     'LLVMTarget',
+    'LLVMTextAPI',
     'LLVMTransformUtils',
     'LLVMVectorize',
     'LLVMWebAssemblyAsmParser',

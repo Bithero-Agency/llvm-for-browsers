@@ -89,7 +89,7 @@ components="\
     passes profiledata \
     remarks \
     scalaropts selectiondag support \
-    target transformutils \
+    target textapi transformutils \
     vectorize \
     webassemblyasmparser webassemblycodegen webassemblydesc webassemblyinfo webassemblyutils \
 "
@@ -131,6 +131,7 @@ libs[scalaropts]='LLVMScalarOpts'
 libs[selectiondag]='LLVMSelectionDAG'
 libs[support]='LLVMSupport'
 libs[target]='LLVMTarget'
+libs[textapi]='LLVMTextAPI'
 libs[transformutils]='LLVMTransformUtils'
 libs[vectorize]='LLVMVectorize'
 libs[webassemblyasmparser]='LLVMWebAssemblyAsmParser'
