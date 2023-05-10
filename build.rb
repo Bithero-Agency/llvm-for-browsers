@@ -6,6 +6,8 @@ require "etc"
 require "optparse"
 
 $llvm_version = "15.0.7"
+$rel = "1"
+
 $src_dir = File.absolute_path("llvm-#{$llvm_version}.src")
 $lld_dir = File.absolute_path("lld-#{$llvm_version}.src")
 $cmake_dir = File.absolute_path("cmake")
@@ -228,11 +230,11 @@ if $options[:package] then
     package(package_dir, llvm_browser_builddir, $src_dir)
     FileUtils.mkdir_p(File.join(package_dir, "bin"))
     FileUtils.cp("./llvm-config-15-em", "#{package_dir}/bin/", :verbose => true)
-    system("tar -cvf browser-llvm-#{$llvm_version}.tar.xz #{package_dir}")
+    system("tar -cvf browser-llvm-#{$llvm_version}-#{$rel}.tar.xz #{package_dir}")
 
     package_dir = "browser-lld-#{$llvm_version}"
     package(package_dir, lld_browser_builddir, $lld_dir)
     FileUtils.mkdir_p(File.join(package_dir, "bin"))
     FileUtils.cp("./lld-config-15-em", "#{package_dir}/bin/", :verbose => true)
-    system("tar -cvf browser-lld-#{$llvm_version}.tar.xz #{package_dir}")
+    system("tar -cvf browser-lld-#{$llvm_version}-#{$rel}.tar.xz #{package_dir}")
 end
