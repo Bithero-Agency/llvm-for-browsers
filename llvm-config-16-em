@@ -1,5 +1,5 @@
 #!bash
-# llvm-config like script for lld
+# Replacement script for llvm-config
 
 # src: https://stackoverflow.com/questions/29832037/how-to-get-script-directory-in-posix-sh/29835459#29835459
 rreadlink() ( # Execute the function in a *subshell* to localize variables and the effect of `cd`.
@@ -53,34 +53,94 @@ if [[ "$(basename "$DIR")" = "bin" ]]; then
 fi
 
 print_usage() {
-    echo "usage: lld-config-15-em <OPTION>... [<COMPONENT>...]"
+    echo "usage: llvm-config-16-em <OPTION>... [<COMPONENT>...]"
     echo ""
-    echo "Script to integrate lld-for-browsers into exisiting projects"
+    echo "Shim for llvm-config to integrate llvm-for-browsers into exisiting projects"
     echo ""
     echo "Options:"
-    echo "  --cflags          C compiler flags for files that include LLD headers."
-    echo "  --components      C compiler flags for files that include LLD headers."
-    echo "  --cppflags        C preprocessor flags for files that include LLD headers."
-    echo "  --cxxflags        C++ compiler flags for files that include LLD headers."
-    echo "  --help            Print a summary of lld-config arguments."
-    echo "  --includedir      Directory containing LLD headers."
+    echo "  --cflags          C compiler flags for files that include LLVM headers."
+    echo "  --components      C compiler flags for files that include LLVM headers."
+    echo "  --cppflags        C preprocessor flags for files that include LLVM headers."
+    echo "  --cxxflags        C++ compiler flags for files that include LLVM headers."
+    echo "  --help            Print a summary of llvm-config arguments."
+    echo "  --includedir      Directory containing LLVM headers."
     echo "  --ldflags         Print Linker flags."
-    echo "  --libdir          Directory containing LLD libraries."
-    echo "  --libs            Libraries needed to link against LLD components."
+    echo "  --libdir          Directory containing LLVM libraries."
+    echo "  --libs            Libraries needed to link against LLVM components."
+    echo "  --link-shared     Link the components as shared libraries. (Will error!)"
+    echo "  --link-static     Link the component libraries statically."
     echo "  --prefix          Print the installation prefix."
-    echo "  --version         Print LLD version."
+    echo "  --shared-mode     Print how the provided components can be collectively linked (`shared` or `static`)."
+    echo "  --targets-built   List of all targets currently built."
+    echo "  --version         Print LLVM version."
 }
 
-components="coff common elf macho mingw wasm"
+components="\
+    aggressiveinstcombine analysis asmparser asmprinter \
+    binaryformat bitreader bitstreamreader bitwriter \
+    codegen core coroutines coverage \
+    debuginfocodeview debuginfodwarf demangle \
+    frontendopenmp \
+    globalisel \
+    instcombine instrumentation ipo irreader \
+    linker lto \
+    mc mcdisassembler mcparser mirparser \
+    objcarcopts object option \
+    passes profiledata \
+    remarks \
+    scalaropts selectiondag support \
+    target textapi transformutils \
+    vectorize \
+    webassemblyasmparser webassemblycodegen webassemblydesc webassemblyinfo webassemblyutils \
+"
 declare -A libs
-libs[coff]='lldCOFF'
-libs[common]='lldCommon'
-libs[elf]='lldELF'
-libs[macho]='lldMachO'
-libs[mingw]='lldMinGW'
-libs[wasm]='lldWasm'
+libs[aggressiveinstcombine]='LLVMAggressiveInstCombine'
+libs[analysis]='LLVMAnalysis'
+libs[asmparser]='LLVMAsmParser'
+libs[asmprinter]='LLVMAsmPrinter'
+libs[binaryformat]='LLVMBinaryFormat'
+libs[bitreader]='LLVMBitReader'
+libs[bitstreamreader]='LLVMBitstreamReader'
+libs[bitwriter]='LLVMBitWriter'
+libs[codegen]='LLVMCodeGen'
+libs[core]='LLVMCore'
+libs[coroutines]='LLVMCoroutines'
+libs[coverage]='LLVMCoverage'
+libs[debuginfocodeview]='LLVMDebugInfoCodeView'
+libs[debuginfodwarf]='LLVMDebugInfoDWARF'
+libs[demangle]='LLVMDemangle'
+libs[frontendopenmp]='LLVMFrontendOpenMP'
+libs[globalisel]='LLVMGlobalISel'
+libs[instcombine]='LLVMInstCombine'
+libs[instrumentation]='LLVMInstrumentation'
+libs[ipo]='LLVMipo'
+libs[irreader]='LLVMIRReader'
+libs[linker]='LLVMLinker'
+libs[lto]='LLVMLTO'
+libs[mc]='LLVMMC'
+libs[mcdisassembler]='LLVMMCDisassembler'
+libs[mcparser]='LLVMMCParser'
+libs[mirparser]='LLVMMIRParser'
+libs[objcarcopts]='LLVMObjCARCOpts'
+libs[object]='LLVMObject'
+libs[option]='LLVMOption'
+libs[passes]='LLVMPasses'
+libs[profiledata]='LLVMProfileData'
+libs[remarks]='LLVMRemarks'
+libs[scalaropts]='LLVMScalarOpts'
+libs[selectiondag]='LLVMSelectionDAG'
+libs[support]='LLVMSupport'
+libs[target]='LLVMTarget'
+libs[textapi]='LLVMTextAPI'
+libs[transformutils]='LLVMTransformUtils'
+libs[vectorize]='LLVMVectorize'
+libs[webassemblyasmparser]='LLVMWebAssemblyAsmParser'
+libs[webassemblycodegen]='LLVMWebAssemblyCodeGen'
+libs[webassemblydesc]='LLVMWebAssemblyDesc'
+libs[webassemblyinfo]='LLVMWebAssemblyInfo'
+libs[webassemblyutils]='LLVMWebAssemblyUtils'
 
-cppflags=""
+cppflags="-D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS"
 print_libs=false
 
 POS_ARGS=()
@@ -99,7 +159,7 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         --cxxflags)
-            echo "-I$DIR/include $cppflags"
+            echo "-I$DIR/include -std=c++14 -fno-exceptions $cppflags"
             shift
             ;;
         --help)
@@ -122,12 +182,27 @@ while [[ $# -gt 0 ]]; do
             print_libs=true
             shift
             ;;
+        --link-shared)
+            echo "Error: llvm-for-browsers cannot be linked shared"
+            exit 1
+            ;;
+        --link-static)
+            shift
+            ;;
         --prefix)
             echo "$DIR"
             exit 0
             ;;
+        --shared-mode)
+            echo "static"
+            exit 0
+            ;;
+        --targets-built)
+            echo "WebAssembly"
+            exit 0
+            ;;
         --version)
-            echo "15.0.7"
+            echo "16.0.6"
             exit 0
             ;;
         --*)
