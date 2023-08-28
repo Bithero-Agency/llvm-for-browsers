@@ -67,6 +67,8 @@ print_usage() {
     echo "  --ldflags         Print Linker flags."
     echo "  --libdir          Directory containing LLD libraries."
     echo "  --libs            Libraries needed to link against LLD components."
+    echo "  --link-shared     Link the components as shared libraries. (Will error!)"
+    echo "  --link-static     Link the component libraries statically."
     echo "  --prefix          Print the installation prefix."
     echo "  --version         Print LLD version."
 }
@@ -120,6 +122,13 @@ while [[ $# -gt 0 ]]; do
             ;;
         --libs)
             print_libs=true
+            shift
+            ;;
+        --link-shared)
+            echo "Error: lld-for-browsers cannot be linked shared"
+            exit 1
+            ;;
+        --link-static)
             shift
             ;;
         --prefix)
