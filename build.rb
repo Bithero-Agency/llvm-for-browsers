@@ -13,6 +13,9 @@ $lld_dir = File.absolute_path("lld-#{$llvm_version}.src")
 $cmake_dir = File.absolute_path("cmake")
 $ninja_jobs = ENV['NINJA_JOBS'] || (Etc.nprocessors / 2)
 
+tblgen_exe = ENV['LLVMTBLGEN_EXE'] || '/usr/bin/llvm-tblgen'
+puts "Using #{tblgen_exe} as llvm-tblgen"
+
 $options = {
     :build_browser => true,
     :build_lld => true,
@@ -155,7 +158,7 @@ cmake_args = [
     '-DLLVM_INCLUDE_BENCHMARKS=OFF',
     '-DBUILD_SHARED_LIBS=OFF',
     '-DLLVM_ENABLE_BINDINGS=OFF',
-    "-DLLVM_TABLEGEN=/usr/bin/llvm-tblgen",
+    "-DLLVM_TABLEGEN=#{tblgen_exe}",
 ]
 
 if $options[:build_browser] then
@@ -186,7 +189,7 @@ lld_cmake_args = [
     '-DLLVM_INCLUDE_TESTS=OFF',
     '-DLLD_BUILD_TOOLS=OFF',
     "-DLLVM_DIR=#{llvm_browser_builddir}/lib/cmake/llvm",
-    "-DLLVM_TABLEGEN_EXE=/usr/bin/llvm-tblgen",
+    "-DLLVM_TABLEGEN_EXE=#{tblgen_exe}",
 ]
 
 if $options[:build_lld] then
