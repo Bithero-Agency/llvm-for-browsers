@@ -53,7 +53,7 @@ if [[ "$(basename "$DIR")" = "bin" ]]; then
 fi
 
 print_usage() {
-    echo "usage: llvm-config-16-em <OPTION>... [<COMPONENT>...]"
+    echo "usage: llvm-config-17-em <OPTION>... [<COMPONENT>...]"
     echo ""
     echo "Shim for llvm-config to integrate llvm-for-browsers into exisiting projects"
     echo ""
@@ -202,7 +202,7 @@ while [[ $# -gt 0 ]]; do
             exit 0
             ;;
         --version)
-            echo "16.0.6"
+            echo "17.0.1"
             exit 0
             ;;
         --*)

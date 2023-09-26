@@ -5,7 +5,7 @@ require "fileutils"
 require "etc"
 require "optparse"
 
-$llvm_version = "16.0.6"
+$llvm_version = "17.0.1"
 $rel = "1"
 
 $src_dir = File.absolute_path("llvm-#{$llvm_version}.src")
@@ -232,12 +232,12 @@ if $options[:package] then
     package_dir = "browser-llvm-#{$llvm_version}"
     package(package_dir, llvm_browser_builddir, $src_dir)
     FileUtils.mkdir_p(File.join(package_dir, "bin"))
-    FileUtils.cp("./llvm-config-16-em", "#{package_dir}/bin/", :verbose => true)
+    FileUtils.cp("./llvm-config-17-em", "#{package_dir}/bin/", :verbose => true)
     system("tar -cvf browser-llvm-#{$llvm_version}-#{$rel}.tar.xz #{package_dir}")
 
     package_dir = "browser-lld-#{$llvm_version}"
     package(package_dir, lld_browser_builddir, $lld_dir)
     FileUtils.mkdir_p(File.join(package_dir, "bin"))
-    FileUtils.cp("./lld-config-16-em", "#{package_dir}/bin/", :verbose => true)
+    FileUtils.cp("./lld-config-17-em", "#{package_dir}/bin/", :verbose => true)
     system("tar -cvf browser-lld-#{$llvm_version}-#{$rel}.tar.xz #{package_dir}")
 end
