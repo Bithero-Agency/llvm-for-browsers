@@ -102,6 +102,7 @@ llvm_browser_targets = [
     'LLVMBitstreamReader',
     'LLVMBitWriter',
     'LLVMCodeGen',
+    'LLVMCodeGenTypes',
     'LLVMCore',
     'LLVMCoroutines',
     'LLVMCoverage',

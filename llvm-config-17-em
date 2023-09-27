@@ -78,7 +78,7 @@ print_usage() {
 components="\
     aggressiveinstcombine analysis asmparser asmprinter \
     binaryformat bitreader bitstreamreader bitwriter \
-    codegen core coroutines coverage \
+    codegen codegentypes core coroutines coverage \
     debuginfocodeview debuginfodwarf demangle \
     frontendopenmp \
     globalisel \
@@ -103,6 +103,7 @@ libs[bitreader]='LLVMBitReader'
 libs[bitstreamreader]='LLVMBitstreamReader'
 libs[bitwriter]='LLVMBitWriter'
 libs[codegen]='LLVMCodeGen'
+libs[codegentypes]='LLVMCodeGenTypes'
 libs[core]='LLVMCore'
 libs[coroutines]='LLVMCoroutines'
 libs[coverage]='LLVMCoverage'
