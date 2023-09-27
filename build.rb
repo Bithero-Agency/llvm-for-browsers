@@ -6,7 +6,7 @@ require "etc"
 require "optparse"
 
 $llvm_version = "17.0.1"
-$rel = "1"
+$rel = "2"
 
 $src_dir = File.absolute_path("llvm-#{$llvm_version}.src")
 $lld_dir = File.absolute_path("lld-#{$llvm_version}.src")
