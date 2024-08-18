@@ -243,12 +243,12 @@ if $options[:package] then
     FileUtils.mkdir_p(File.join(package_dir, "bin"))
     FileUtils.cp("./llvm-config-em", "#{package_dir}/bin/llvm-config-#{$llvm_major}-em", :verbose => true)
     finish_shell_script("#{package_dir}/bin/llvm-config-#{$llvm_major}-em")
-    system("tar -cvf browser-llvm-#{$llvm_version}-#{$rel}.tar.xz #{package_dir}")
+    system("tar -cvJf browser-llvm-#{$llvm_version}-#{$rel}.tar.xz #{package_dir}")
 
     package_dir = "browser-lld-#{$llvm_version}"
     package(package_dir, lld_browser_builddir, $lld_dir)
     FileUtils.mkdir_p(File.join(package_dir, "bin"))
     FileUtils.cp("./lld-config-em", "#{package_dir}/bin/lld-config-#{$llvm_major}-em", :verbose => true)
     finish_shell_script("#{package_dir}/bin/lld-config-#{$llvm_major}-em")
-    system("tar -cvf browser-lld-#{$llvm_version}-#{$rel}.tar.xz #{package_dir}")
+    system("tar -cvJf browser-lld-#{$llvm_version}-#{$rel}.tar.xz #{package_dir}")
 end
