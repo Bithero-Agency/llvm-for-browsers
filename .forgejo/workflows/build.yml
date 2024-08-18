@@ -23,7 +23,7 @@ jobs:
           pacman --noconfirm -S ruby base-devel clang llvm llvm-libs emscripten wget cmake ninja
 
           source /etc/profile.d/emscripten.sh
-          LLVMTBLGEN_EXE=/usr/lib/llvm17/bin/llvm-tblgen ruby ./build.rb --pack
+          ruby ./build.rb --pack
 
       - uses: actions/upload-artifact@v4
         with:
