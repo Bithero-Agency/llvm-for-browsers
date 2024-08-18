@@ -1,0 +1,36 @@
+on:
+  workflow_dispatch:
+  push:
+    tag:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: docker
+    container:
+      image: archlinux:base-devel
+    steps:
+      - name: Prepare system
+        run: |
+          pacman --noconfirm -Syu
+          pacman --noconfirm -S nodejs
+
+      - uses: actions/checkout@v4
+
+      - name: Build
+        id: build
+        run: |
+          pacman --noconfirm -S ruby base-devel clang llvm llvm-libs emscripten wget cmake ninja
+
+          source /etc/profile.d/emscripten.sh
+          LLVMTBLGEN_EXE=/usr/lib/llvm17/bin/llvm-tblgen ruby ./build.rb --pack
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: browser-llvm-${{ steps.build.outputs.version }}.tar.xz
+          path: ./browser-llvm-${{ steps.build.outputs.version }}.tar.xz
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: browser-lld-${{ steps.build.outputs.version }}.tar.xz
+          path: ./browser-lld-${{ steps.build.outputs.version }}.tar.xz

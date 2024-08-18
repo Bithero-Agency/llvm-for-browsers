@@ -9,6 +9,12 @@ $llvm_version = "17.0.1"
 $llvm_major = $llvm_version.split('.')[0]
 $rel = "2"
 
+if (ENV['GITHUB_OUTPUT'] != nil) then
+    github_output = File.open(ENV["GITHUB_OUTPUT"], "at")
+    github_output.write("version=#{$llvm_version}-#{$llvm_rel}\n")
+    github_output.close()
+end
+
 $src_dir = File.absolute_path("llvm-#{$llvm_version}.src")
 $lld_dir = File.absolute_path("lld-#{$llvm_version}.src")
 $cmake_dir = File.absolute_path("cmake")
