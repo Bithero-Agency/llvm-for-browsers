@@ -1,8 +1,8 @@
 on:
   workflow_dispatch:
   push:
-    tag:
-      - "v*"
+    tags:
+      - "*.*.*-*"
 
 jobs:
   build:
@@ -34,3 +34,10 @@ jobs:
         with:
           name: browser-lld-${{ steps.build.outputs.version }}.tar.xz
           path: ./browser-lld-${{ steps.build.outputs.version }}.tar.xz
+
+      - if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/action-gh-release@v2
+        with:
+          files: |
+            browser-llvm-${{ steps.build.outputs.version }}.tar.xz
+            browser-lld-${{ steps.build.outputs.version }}.tar.xz
