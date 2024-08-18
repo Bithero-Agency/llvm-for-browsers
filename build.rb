@@ -6,6 +6,7 @@ require "etc"
 require "optparse"
 
 $llvm_version = "17.0.1"
+$llvm_major = $llvm_version.split('.')[0]
 $rel = "2"
 
 $src_dir = File.absolute_path("llvm-#{$llvm_version}.src")
@@ -229,16 +230,25 @@ def package(package_dir, builddir, src_dir)
     end
 end
 
+def finish_shell_script(file)
+    content = File.read(file)
+    content.gsub!(/%LLVM_MAJOR%/, $llvm_major)
+    content.gsub!(/%LLVM_VERSION%/, $llvm_version)
+    File.write(file, content)
+end
+
 if $options[:package] then
     package_dir = "browser-llvm-#{$llvm_version}"
     package(package_dir, llvm_browser_builddir, $src_dir)
     FileUtils.mkdir_p(File.join(package_dir, "bin"))
-    FileUtils.cp("./llvm-config-17-em", "#{package_dir}/bin/", :verbose => true)
+    FileUtils.cp("./llvm-config-em", "#{package_dir}/bin/llvm-config-#{$llvm_major}-em", :verbose => true)
+    finish_shell_script("#{package_dir}/bin/llvm-config-#{$llvm_major}-em")
     system("tar -cvf browser-llvm-#{$llvm_version}-#{$rel}.tar.xz #{package_dir}")
 
     package_dir = "browser-lld-#{$llvm_version}"
     package(package_dir, lld_browser_builddir, $lld_dir)
     FileUtils.mkdir_p(File.join(package_dir, "bin"))
-    FileUtils.cp("./lld-config-17-em", "#{package_dir}/bin/", :verbose => true)
+    FileUtils.cp("./lld-config-em", "#{package_dir}/bin/lld-config-#{$llvm_major}-em", :verbose => true)
+    finish_shell_script("#{package_dir}/bin/lld-config-#{$llvm_major}-em")
     system("tar -cvf browser-lld-#{$llvm_version}-#{$rel}.tar.xz #{package_dir}")
 end
