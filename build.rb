@@ -5,7 +5,7 @@ require "fileutils"
 require "etc"
 require "optparse"
 
-$llvm_version = "17.0.1"
+$llvm_version = "18.1.8"
 $llvm_major = $llvm_version.split('.')[0]
 $rel = "2"
 
@@ -62,7 +62,7 @@ end
 
 # ----------------------------------------------------------------------------------
 
-unless Dir.exists?($src_dir) then
+unless Dir.exist?($src_dir) then
     puts ">>>> downloading llvm #{$llvm_version}"
     download("https://github.com/llvm/llvm-project/releases/download/llvmorg-#{$llvm_version}/llvm-#{$llvm_version}.src.tar.xz")
     puts ">>>> extracting llvm #{$llvm_version}"
@@ -71,7 +71,7 @@ else
     puts ">>>> re-using existing llvm #{$llvm_version}"
 end
 
-unless Dir.exists?($lld_dir) then
+unless Dir.exist?($lld_dir) then
     puts ">>>> downloading lld #{$llvm_version}"
     download("https://github.com/llvm/llvm-project/releases/download/llvmorg-#{$llvm_version}/lld-#{$llvm_version}.src.tar.xz")
     puts ">>>> extracting lld #{$llvm_version}"
@@ -80,7 +80,7 @@ else
     puts ">>>> re-using existing lld #{$llvm_version}"
 end
 
-unless Dir.exists?($cmake_dir) then
+unless Dir.exist?($cmake_dir) then
     puts ">>>> downloading cmake for llvm #{$llvm_version}"
     download("https://github.com/llvm/llvm-project/releases/download/llvmorg-#{$llvm_version}/cmake-#{$llvm_version}.src.tar.xz")
     puts ">>>> extracting cmake for llvm #{$llvm_version}"
@@ -209,7 +209,7 @@ if $options[:build_lld] then
 end
 
 def package(package_dir, builddir, src_dir)
-    if Dir.exists?(package_dir) then
+    if Dir.exist?(package_dir) then
         FileUtils.rm_rf(package_dir)
     end
 
