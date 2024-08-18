@@ -11,7 +11,7 @@ $rel = "2"
 
 if (ENV['GITHUB_OUTPUT'] != nil) then
     github_output = File.open(ENV["GITHUB_OUTPUT"], "at")
-    github_output.write("version=#{$llvm_version}-#{$llvm_rel}\n")
+    github_output.write("version=#{$llvm_version}-#{$rel}\n")
     github_output.close()
 end
 
