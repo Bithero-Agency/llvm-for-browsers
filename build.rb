@@ -50,7 +50,10 @@ end
 def patch(file)
     Dir.chdir($src_dir) do
         puts ">>>> applying #{file}"
-        system("patch -N -p0 -i ../#{file}")
+        $f = system("patch -N -p0 -i ../#{file}")
+        if !$f then
+            raise "Failed to apply patch #{file}"
+        end
     end
 end
 
