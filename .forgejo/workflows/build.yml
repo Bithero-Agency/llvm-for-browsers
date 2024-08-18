@@ -25,12 +25,12 @@ jobs:
           source /etc/profile.d/emscripten.sh
           ruby ./build.rb --pack
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v3
         with:
           name: browser-llvm-${{ steps.build.outputs.version }}.tar.xz
           path: ./browser-llvm-${{ steps.build.outputs.version }}.tar.xz
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v3
         with:
           name: browser-lld-${{ steps.build.outputs.version }}.tar.xz
           path: ./browser-lld-${{ steps.build.outputs.version }}.tar.xz
