@@ -66,7 +66,7 @@ unless Dir.exist?($src_dir) then
     puts ">>>> downloading llvm #{$llvm_version}"
     download("https://github.com/llvm/llvm-project/releases/download/llvmorg-#{$llvm_version}/llvm-#{$llvm_version}.src.tar.xz")
     puts ">>>> extracting llvm #{$llvm_version}"
-    system("tar -xvf ./llvm-#{$llvm_version}.src.tar.xz -C .")
+    system("tar -xf ./llvm-#{$llvm_version}.src.tar.xz -C .")
 else
     puts ">>>> re-using existing llvm #{$llvm_version}"
 end
@@ -75,7 +75,7 @@ unless Dir.exist?($lld_dir) then
     puts ">>>> downloading lld #{$llvm_version}"
     download("https://github.com/llvm/llvm-project/releases/download/llvmorg-#{$llvm_version}/lld-#{$llvm_version}.src.tar.xz")
     puts ">>>> extracting lld #{$llvm_version}"
-    system("tar -xvf ./lld-#{$llvm_version}.src.tar.xz -C .")
+    system("tar -xf ./lld-#{$llvm_version}.src.tar.xz -C .")
 else
     puts ">>>> re-using existing lld #{$llvm_version}"
 end
@@ -84,7 +84,7 @@ unless Dir.exist?($cmake_dir) then
     puts ">>>> downloading cmake for llvm #{$llvm_version}"
     download("https://github.com/llvm/llvm-project/releases/download/llvmorg-#{$llvm_version}/cmake-#{$llvm_version}.src.tar.xz")
     puts ">>>> extracting cmake for llvm #{$llvm_version}"
-    run("tar -xvf ./cmake-#{$llvm_version}.src.tar.xz -C .")
+    run("tar -xf ./cmake-#{$llvm_version}.src.tar.xz -C .")
     run("mv cmake-#{$llvm_version}.src cmake")
 else
     puts ">>>> re-using existing cmake for llvm #{$llvm_version}"
