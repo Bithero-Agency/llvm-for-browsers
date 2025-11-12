@@ -20,10 +20,10 @@ jobs:
       - name: Build
         id: build
         run: |
-          pacman --noconfirm -S ruby base-devel clang llvm llvm-libs emscripten wget cmake ninja
+          pacman --noconfirm -S ruby base-devel clang llvm19 llvm19-libs emscripten wget cmake ninja
 
           source /etc/profile.d/emscripten.sh
-          ruby ./build.rb --pack
+          LLVMTBLGEN_EXE=/usr/lib/llvm19/bin/llvm-tblgen ruby ./build.rb --pack
 
       - uses: actions/upload-artifact@v3
         with:

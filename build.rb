@@ -5,9 +5,9 @@ require "fileutils"
 require "etc"
 require "optparse"
 
-$llvm_version = "18.1.8"
+$llvm_version = "19.1.1"
 $llvm_major = $llvm_version.split('.')[0]
-$rel = "2"
+$rel = "1"
 
 if (ENV['GITHUB_OUTPUT'] != nil) then
     github_output = File.open(ENV["GITHUB_OUTPUT"], "at")
