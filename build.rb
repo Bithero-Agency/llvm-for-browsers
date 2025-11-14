@@ -5,7 +5,7 @@ require "fileutils"
 require "etc"
 require "optparse"
 
-$llvm_version = "19.1.1"
+$llvm_version = "19.1.7"
 $llvm_major = $llvm_version.split('.')[0]
 $rel = "1"
 
