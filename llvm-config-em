@@ -75,74 +75,13 @@ print_usage() {
     echo "  --version         Print LLVM version."
 }
 
-components="\
-    aggressiveinstcombine analysis asmparser asmprinter \
-    binaryformat bitreader bitstreamreader bitwriter \
-    codegen codegentypes core coroutines coverage \
-    debuginfocodeview debuginfodwarf demangle \
-    frontendopenmp \
-    globalisel \
-    instcombine instrumentation ipo irreader \
-    linker lto \
-    mc mcdisassembler mcparser mirparser \
-    objcarcopts object option \
-    passes profiledata \
-    remarks \
-    scalaropts selectiondag support \
-    target textapi transformutils \
-    vectorize \
-    webassemblyasmparser webassemblycodegen webassemblydesc webassemblyinfo webassemblyutils \
-"
+components="__COMPONENTS__"
+
 declare -A libs
-libs[aggressiveinstcombine]='LLVMAggressiveInstCombine'
-libs[analysis]='LLVMAnalysis'
-libs[asmparser]='LLVMAsmParser'
-libs[asmprinter]='LLVMAsmPrinter'
-libs[binaryformat]='LLVMBinaryFormat'
-libs[bitreader]='LLVMBitReader'
-libs[bitstreamreader]='LLVMBitstreamReader'
-libs[bitwriter]='LLVMBitWriter'
-libs[cfguard]='LLVMCFGuard'
-libs[codegen]='LLVMCodeGen'
-libs[codegentypes]='LLVMCodeGenTypes'
-libs[core]='LLVMCore'
-libs[coroutines]='LLVMCoroutines'
-libs[coverage]='LLVMCoverage'
-libs[debuginfocodeview]='LLVMDebugInfoCodeView'
-libs[debuginfodwarf]='LLVMDebugInfoDWARF'
-libs[demangle]='LLVMDemangle'
-libs[frontendoffloading]='LLVMFrontendOffloading'
-libs[frontendopenmp]='LLVMFrontendOpenMP'
-libs[globalisel]='LLVMGlobalISel'
-libs[hipstdpar]='LLVMHipStdPar'
-libs[instcombine]='LLVMInstCombine'
-libs[instrumentation]='LLVMInstrumentation'
-libs[ipo]='LLVMipo'
-libs[irreader]='LLVMIRReader'
-libs[linker]='LLVMLinker'
-libs[lto]='LLVMLTO'
-libs[mc]='LLVMMC'
-libs[mcdisassembler]='LLVMMCDisassembler'
-libs[mcparser]='LLVMMCParser'
-libs[mirparser]='LLVMMIRParser'
-libs[objcarcopts]='LLVMObjCARCOpts'
-libs[object]='LLVMObject'
-libs[option]='LLVMOption'
-libs[passes]='LLVMPasses'
-libs[profiledata]='LLVMProfileData'
-libs[remarks]='LLVMRemarks'
-libs[scalaropts]='LLVMScalarOpts'
-libs[selectiondag]='LLVMSelectionDAG'
-libs[support]='LLVMSupport'
-libs[target]='LLVMTarget'
-libs[textapi]='LLVMTextAPI'
-libs[transformutils]='LLVMTransformUtils'
-libs[vectorize]='LLVMVectorize'
-libs[webassemblyasmparser]='LLVMWebAssemblyAsmParser'
-libs[webassemblycodegen]='LLVMWebAssemblyCodeGen'
-libs[webassemblydesc]='LLVMWebAssemblyDesc'
-libs[webassemblyinfo]='LLVMWebAssemblyInfo'
-libs[webassemblyutils]='LLVMWebAssemblyUtils'
+##__LIB_NAMES__
+
+declare -A comp_deps
+##__COMP_DEPS__
 
 cppflags="-D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS"
 print_libs=false
@@ -220,18 +159,40 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-if $print_libs; then
-    if [[ " ${POS_ARGS[*]} " =~ " all " ]]; then
-        str=""
-        for comp in $components; do
-            str="$str -l${libs["$comp"]}"
-        done
-        echo "$str"
-    else
-        str=""
-        for comp in "${POS_ARGS[@]}"; do
-            str="$str -l${libs["$comp"]}"
-        done
-        echo "$str"
+visited_list=""
+require_list=""
+visit_component() {
+    local name="$1"
+    if [[ $visited_list =~ (^|[[:space:]])$name($|[[:space:]]) ]]; then
+        return 0
     fi
+    visited_list="$visited_list $name"
+
+    local deps="${comp_deps["$name"]}"
+    for dep in $deps; do
+        visit_component "$dep"
+    done
+
+    local libname="${libs["$name"]}"
+    require_list="$libname $require_list"
+}
+libs_for_comps() {
+    visited_list=""
+    require_list=""
+    for comp in $@; do
+        visit_component "$comp"
+    done
+}
+
+if $print_libs; then
+    str=""
+    libs_for_comps "${POS_ARGS[@]}"
+    for lib in $require_list; do
+        if [[ -z "$str" ]]; then
+            str="-l$lib"
+        else
+            str="$str -l$lib"
+        fi
+    done
+    echo "$str"
 fi

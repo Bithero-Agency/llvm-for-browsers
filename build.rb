@@ -253,7 +253,7 @@ if $options[:package] then
     package_dir = "browser-llvm-#{$llvm_version}"
     package(package_dir, llvm_browser_builddir, $src_dir)
     FileUtils.mkdir_p(File.join(package_dir, "bin"))
-    FileUtils.cp("./llvm-config-em", "#{package_dir}/bin/llvm-config-#{$llvm_major}-em", :verbose => true)
+    run("ruby ./build_llvm_config_script.rb --build-dir #{llvm_browser_builddir} --output #{package_dir}/bin/llvm-config-#{$llvm_major}-em")
     finish_shell_script("#{package_dir}/bin/llvm-config-#{$llvm_major}-em")
     system("tar -cvJf browser-llvm-#{$llvm_version}-#{$rel}.tar.xz #{package_dir}")
 
