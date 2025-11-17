@@ -140,6 +140,7 @@ llvm_browser_targets = [
     'LLVMPasses',
     'LLVMProfileData',
     'LLVMRemarks',
+    'LLVMSandboxIR',
     'LLVMScalarOpts',
     'LLVMSelectionDAG',
     'LLVMSupport',
